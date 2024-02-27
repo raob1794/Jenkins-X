@@ -1,0 +1,25 @@
+{{- if .Values.service.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "jx.fullname" . }}
+  labels:
+    app: {{ template "jx.fullname" . }}
+    chart: {{ template "jx.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- if .Values.service.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.service.serviceAnnotations | indent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "jx.fullname" . }}
+    release: {{ .Release.Name }}
+{{- end }}
